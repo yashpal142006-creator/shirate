@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SahiRate - सही रेट</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7f5;
+      color: #222;
+    }
+
+    header {
+      background: #087f46;
+      color: white;
+      padding: 22px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+    }
+
+    header p {
+      margin-bottom: 0;
+    }
+
+    .search {
+      display: block;
+      width: 90%;
+      max-width: 500px;
+      padding: 13px;
+      margin: 20px auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
+      gap: 14px;
+      padding: 16px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .product {
+      background: white;
+      padding: 18px 12px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px #00000010;
+    }
+
+    .emoji {
+      font-size: 38px;
+    }
+
+    .price {
+      font-size: 20px;
+      font-weight: bold;
+      color: #087f46;
+    }
+
+    button {
+      background: #087f46;
+      color: white;
+      border: none;
+      border-radius: 7px;
+      padding: 10px 14px;
+      cursor: pointer;
+    }
+
+    .cart {
+      margin: 16px;
+      padding: 18px;
+      background: white;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    footer {
+      padding: 20px;
+      text-align: center;
+      color: #555;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>SahiRate</h1>
+  <p>सही कीमत, साफ हिसाब, सबके लिए</p>
+</header>
+
+<input
+  class="search"
+  id="search"
+  placeholder="सामान खोजें..."
+  oninput="searchProducts()"
+>
+
+<h2>रोज़मर्रा का सामान</h2>
+
+<div class="products" id="products"></div>
+
+<div class="cart">
+  <h2>आपकी टोकरी</h2>
+  <p id="cartItems">अभी कोई सामान नहीं चुना</p>
+  <h3 id="total">कुल: ₹0</h3>
+  <p>डिलीवरी शुल्क ऑर्डर से पहले अलग दिखाया जाएगा।</p>
+</div>
+
+<footer>
+  SahiRate — कीमत में पारदर्शिता, हर परिवार के लिए।
+  <p>दिखाई गई कीमतें उदाहरण हैं, वास्तविक बाजार भाव नहीं।</p>
+</footer>
+
+<script>
+  const items = [
+    {name: "आटा (1 किलो)", price: 35, emoji: "🌾"},
+    {name: "चावल (1 किलो)", price: 50, emoji: "🍚"},
+    {name: "दूध (1 लीटर)", price: 60, emoji: "🥛"},
+    {name: "दाल (1 किलो)", price: 100, emoji: "🫘"},
+    {name: "आलू (1 किलो)", price: 25, emoji: "🥔"},
+    {name: "प्याज (1 किलो)", price: 30, emoji: "🧅"},
+    {name: "साबुन (1 पीस)", price: 30, emoji: "🧼"},
+    {name: "खाने का तेल (1 लीटर)", price: 140, emoji: "🫗"}
+  ];
+
+  let cart = {};
+
+  function showProducts(list = items) {
+    document.getElementById("products").innerHTML =
+      list.map(item => `
+        <div class="product">
+          <div class="emoji">${item.emoji}</div>
+          <h3>${item.name}</h3>
+          <p class="price">₹${item.price}</p>
+          <button onclick="addItem('${item.name}')">
+            टोकरी में जोड़ें
+          </button>
+        </div>
+      `).join("");
+  }
+
+  function addItem(name) {
+    cart[name] = (cart[name] || 0) + 1;
+    updateCart();
+  }
+
+  function updateCart() {
+    let total = 0;
+    let lines = [];
+
+    for (const name in cart) {
+      const item = items.find(p => p.name === name);
+      total += item.price * cart[name];
+      lines.push(`${name} × ${cart[name]}`);
+    }
+
+    document.getElementById("cartItems").textContent =
+      lines.join(", ") || "अभी कोई सामान नहीं चुना";
+
+    document.getElementById("total").textContent =
+      "कुल: ₹" + total;
+  }
+
+  function searchProducts() {
+    const query = document.getElementById("search")
+      .value.toLowerCase();
+
+    showProducts(items.filter(item =>
+      item.name.toLowerCase().includes(query)
+    ));
+  }
+
+  showProducts();
+</script>
+
+</body>
+</html>
