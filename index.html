@@ -1,195 +1,246 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SahiRate - सही रेट</title>
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7f5;
-      color: #222;
-    }
-
-    header {
-      background: #087f46;
-      color: white;
-      padding: 22px 16px;
-      text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 30px;
-    }
-
-    header p {
-      margin-bottom: 0;
-    }
-
-    .search {
-      display: block;
-      width: 90%;
-      max-width: 500px;
-      padding: 13px;
-      margin: 20px auto;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-    }
-
-    h2 {
-      text-align: center;
-    }
-
-    .products {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-      gap: 14px;
-      padding: 16px;
-      max-width: 900px;
-      margin: auto;
-    }
-
-    .product {
-      background: white;
-      padding: 18px 12px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 2px 8px #00000010;
-    }
-
-    .emoji {
-      font-size: 38px;
-    }
-
-    .price {
-      font-size: 20px;
-      font-weight: bold;
-      color: #087f46;
-    }
-
-    button {
-      background: #087f46;
-      color: white;
-      border: none;
-      border-radius: 7px;
-      padding: 10px 14px;
-      cursor: pointer;
-    }
-
-    .cart {
-      margin: 16px;
-      padding: 18px;
-      background: white;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    footer {
-      padding: 20px;
-      text-align: center;
-      color: #555;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SahiRate | Online Store</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7f5;color:#222}
+header{background:#137a43;color:white;padding:18px}
+.wrap{max-width:1100px;margin:auto;padding:16px}
+nav{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.logo{font-size:28px;font-weight:bold}
+input,textarea,select{padding:12px;border:1px solid #ccc;border-radius:7px;width:100%;font:inherit;margin:5px 0}
+button{background:#137a43;color:white;border:0;border-radius:7px;padding:10px 13px;cursor:pointer}
+button:hover{background:#0d6033}
+.hero{background:#e0f3e7;padding:22px;border-radius:12px;margin:20px 0}
+.categories{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:14px}
+.product,.panel{background:white;border-radius:10px;padding:15px;box-shadow:0 2px 8px #0001}
+.emoji{font-size:38px}
+.price{color:#137a43;font-size:20px;font-weight:bold}
+.product button{width:100%;margin-top:8px}
+.panel{margin-top:22px}
+.cartrow{display:flex;justify-content:space-between;align-items:center;gap:8px;border-bottom:1px solid #eee;padding:12px 0}
+.qty{display:flex;align-items:center;gap:7px}
+.qty button{padding:6px 10px}
+.small{color:#666;font-size:13px}
+footer{text-align:center;padding:24px;color:#666}
+</style>
 </head>
 <body>
-
 <header>
-  <h1>SahiRate</h1>
-  <p>सही कीमत, साफ हिसाब, सबके लिए</p>
+  <nav>
+    <div>
+      <div class="logo">SahiRate 🛒</div>
+      <div>Everyday essentials at fair prices</div>
+    </div>
+    <button onclick="document.getElementById('cart').scrollIntoView()">Cart: <span id="count">0</span></button>
+  </nav>
 </header>
 
-<input
-  class="search"
-  id="search"
-  placeholder="सामान खोजें..."
-  oninput="searchProducts()"
->
+<main class="wrap">
+  <section class="hero">
+    <h1>Your Everyday Online Store</h1>
+    <p>Shop groceries and household essentials in one place.</p>
+    <input id="search" placeholder="Search for rice, milk, soap..." oninput="renderProducts()">
+  </section>
 
-<h2>रोज़मर्रा का सामान</h2>
+  <h2>Shop by Category</h2>
+  <div class="categories" id="categories"></div>
 
-<div class="products" id="products"></div>
+  <h2>Our Products</h2>
+  <div class="products" id="products"></div>
 
-<div class="cart">
-  <h2>आपकी टोकरी</h2>
-  <p id="cartItems">अभी कोई सामान नहीं चुना</p>
-  <h3 id="total">कुल: ₹0</h3>
-  <p>डिलीवरी शुल्क ऑर्डर से पहले अलग दिखाया जाएगा।</p>
-</div>
+  <section class="panel" id="cart">
+    <h2>Your Shopping Cart</h2>
+    <div id="cartItems">Your cart is empty.</div>
+    <h3>Subtotal: ₹<span id="subtotal">0</span></h3>
+    <p class="small">Delivery charges, if any, will be confirmed before the order.</p>
+    <button onclick="clearCart()">Clear Cart</button>
+  </section>
 
-<footer>
-  SahiRate — कीमत में पारदर्शिता, हर परिवार के लिए।
-  <p>दिखाई गई कीमतें उदाहरण हैं, वास्तविक बाजार भाव नहीं।</p>
-</footer>
+  <section class="panel">
+    <h2>Checkout</h2>
+    <p>Enter your details to prepare your order.</p>
+    <form id="checkout">
+      <label>Full Name</label>
+      <input name="customer" required placeholder="Your full name">
+
+      <label>Mobile Number</label>
+      <input name="phone" required inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number">
+
+      <label>Delivery Address</label>
+      <textarea name="address" required placeholder="House number, street, area, city, PIN code"></textarea>
+
+      <label>Payment Preference</label>
+      <select name="payment">
+        <option value="Cash on delivery">Cash on delivery (request only)</option>
+        <option value="Online payment requested">Online payment (not yet integrated)</option>
+      </select>
+
+      <button type="submit">Prepare Order</button>
+    </form>
+    <div id="result" aria-live="polite"></div>
+  </section>
+</main>
+
+<footer>© 2026 SahiRate · Sample prices for demonstration</footer>
 
 <script>
-  const items = [
-    {name: "आटा (1 किलो)", price: 35, emoji: "🌾"},
-    {name: "चावल (1 किलो)", price: 50, emoji: "🍚"},
-    {name: "दूध (1 लीटर)", price: 60, emoji: "🥛"},
-    {name: "दाल (1 किलो)", price: 100, emoji: "🫘"},
-    {name: "आलू (1 किलो)", price: 25, emoji: "🥔"},
-    {name: "प्याज (1 किलो)", price: 30, emoji: "🧅"},
-    {name: "साबुन (1 पीस)", price: 30, emoji: "🧼"},
-    {name: "खाने का तेल (1 लीटर)", price: 140, emoji: "🫗"}
-  ];
+const products = [
+  {id:1,name:"Wheat Flour",price:35,unit:"kg",category:"Grocery",emoji:"🌾"},
+  {id:2,name:"Rice",price:50,unit:"kg",category:"Grocery",emoji:"🍚"},
+  {id:3,name:"Lentils",price:100,unit:"kg",category:"Grocery",emoji:"🫘"},
+  {id:4,name:"Cooking Oil",price:140,unit:"litre",category:"Grocery",emoji:"🫗"},
+  {id:5,name:"Milk",price:60,unit:"litre",category:"Dairy",emoji:"🥛"},
+  {id:6,name:"Butter",price:55,unit:"pack",category:"Dairy",emoji:"🧈"},
+  {id:7,name:"Potatoes",price:25,unit:"kg",category:"Vegetables",emoji:"🥔"},
+  {id:8,name:"Onions",price:30,unit:"kg",category:"Vegetables",emoji:"🧅"},
+  {id:9,name:"Tomatoes",price:35,unit:"kg",category:"Vegetables",emoji:"🍅"},
+  {id:10,name:"Apples",price:120,unit:"kg",category:"Fruits",emoji:"🍎"},
+  {id:11,name:"Bananas",price:50,unit:"dozen",category:"Fruits",emoji:"🍌"},
+  {id:12,name:"Soap",price:30,unit:"piece",category:"Household",emoji:"🧼"},
+  {id:13,name:"Toothpaste",price:60,unit:"pack",category:"Household",emoji:"🪥"},
+  {id:14,name:"Dishwashing Liquid",price:75,unit:"bottle",category:"Household",emoji:"🧽"}
+];
 
-  let cart = {};
+let cart = {};
+let activeCategory = "All";
+const categories = ["All",...new Set(products.map(p=>p.category))];
 
-  function showProducts(list = items) {
-    document.getElementById("products").innerHTML =
-      list.map(item => `
-        <div class="product">
-          <div class="emoji">${item.emoji}</div>
-          <h3>${item.name}</h3>
-          <p class="price">₹${item.price}</p>
-          <button onclick="addItem('${item.name}')">
-            addtocart
-          
-          </button>
+document.getElementById("categories").innerHTML = categories.map(c =>
+  `<button class="categoryBtn" onclick="setCategory('${c}')">${c}</button>`
+).join("");
+
+function setCategory(category){
+  activeCategory = category;
+  renderProducts();
+}
+
+function renderProducts(){
+  const query = document.getElementById("search").value.toLowerCase();
+  const filtered = products.filter(p =>
+    (activeCategory === "All" || p.category === activeCategory) &&
+    p.name.toLowerCase().includes(query)
+  );
+
+  document.getElementById("products").innerHTML = filtered.length
+    ? filtered.map(p => `
+      <article class="product">
+        <div class="emoji">${p.emoji}</div>
+        <h3>${p.name}</h3>
+        <div class="price">₹${p.price}</div>
+        <p class="small">per ${p.unit} · ${p.category}</p>
+        <button onclick="addToCart(${p.id})">Add to Cart</button>
+      </article>`).join("")
+    : "<p>No matching products found.</p>";
+}
+
+function addToCart(id){
+  cart[id] = (cart[id] || 0) + 1;
+  renderCart();
+}
+
+function changeQty(id,change){
+  cart[id] = (cart[id] || 0) + change;
+  if(cart[id] <= 0) delete cart[id];
+  renderCart();
+}
+
+function renderCart(){
+  const entries = Object.entries(cart);
+  let subtotal = 0, count = 0;
+
+  if(!entries.length){
+    document.getElementById("cartItems").innerHTML = "Your cart is empty.";
+  } else {
+    document.getElementById("cartItems").innerHTML = entries.map(([id,qty]) => {
+      const p = products.find(x=>x.id===Number(id));
+      subtotal += p.price * qty;
+      count += qty;
+      return `<div class="cartrow">
+        <div><strong>${p.name}</strong><br>₹${p.price} × ${qty}</div>
+        <div class="qty">
+          <button type="button" onclick="changeQty(${p.id},-1)">−</button>
+          <span>${qty}</span>
+          <button type="button" onclick="changeQty(${p.id},1)">+</button>
         </div>
-      `).join("");
+      </div>`;
+    }).join("");
   }
 
-  function addItem(name) {
-    cart[name] = (cart[name] || 0) + 1;
-    updateCart();
+  document.getElementById("subtotal").textContent = subtotal;
+  document.getElementById("count").textContent =
+    Object.values(cart).reduce((a,b)=>a+b,0);
+}
+
+function clearCart(){
+  cart = {};
+  renderCart();
+  document.getElementById("result").textContent = "";
+}
+
+document.getElementById("checkout").addEventListener("submit",function(e){
+  e.preventDefault();
+
+  if(Object.keys(cart).length === 0){
+    document.getElementById("result").textContent =
+      "Please add products to your cart first.";
+    return;
   }
 
-  function updateCart() {
-    let total = 0;
-    let lines = [];
+  const data = new FormData(this);
+  const items = Object.entries(cart).map(([id,qty]) => {
+    const p = products.find(x=>x.id===Number(id));
+    return `${p.name} x ${qty} = ₹${p.price*qty}`;
+  });
 
-    for (const name in cart) {
-      const item = items.find(p => p.name === name);
-      total += item.price * cart[name];
-      lines.push(`${name} × ${cart[name]}`);
+  const total = Object.entries(cart).reduce((sum,[id,qty]) =>
+    sum + products.find(p=>p.id===Number(id)).price*qty,0);
+
+  const order = [
+    "SAHIRATE ORDER SUMMARY",
+    "Name: " + data.get("customer"),
+    "Mobile: " + data.get("phone"),
+    "Address: " + data.get("address"),
+    "Payment preference: " + data.get("payment"),
+    "",
+    ...items,
+    "",
+    "Subtotal: ₹" + total,
+    "",
+    "DEMO ONLY: This order has not been sent to a store."
+  ].join("\n");
+
+  const result = document.getElementById("result");
+  result.innerHTML = "<h3>Order Summary Ready</h3><p>Your order summary is prepared. No order has been placed or sent to a seller.</p>";
+  const pre = document.createElement("textarea");
+  pre.readOnly = true;
+  pre.rows = 10;
+  pre.value = order;
+  result.appendChild(pre);
+
+  const copyButton = document.createElement("button");
+  copyButton.type = "button";
+  copyButton.textContent = "Copy Order Summary";
+  copyButton.onclick = async () => {
+    try {
+      await navigator.clipboard.writeText(order);
+      copyButton.textContent = "Copied!";
+    } catch {
+      pre.focus();
+      pre.select();
+      document.execCommand("copy");
+      copyButton.textContent = "Select and copy if needed";
     }
+  };
+  result.appendChild(copyButton);
+});
 
-    document.getElementById("cartItems").textContent =
-      lines.join(", ") || "अभी कोई सामान नहीं चुना";
-
-    document.getElementById("total").textContent =
-      "कुल: ₹" + total;
-  }
-
-  function searchProducts() {
-    const query = document.getElementById("search")
-      .value.toLowerCase();
-
-    showProducts(items.filter(item =>
-      item.name.toLowerCase().includes(query)
-    ));
-  }
-
-  showProducts();
+renderProducts();
+renderCart();
 </script>
-
 </body>
 </html>
